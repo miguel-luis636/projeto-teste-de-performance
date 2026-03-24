@@ -58,7 +58,7 @@ Simular usuários reais utilizando a API de forma contínua.
 
 **Carga:**
 
-* 100 → 500 VUs
+* 70 → 500 VUs
 
 **Ramp-up:**
 
@@ -270,7 +270,7 @@ Aumentar carga até ocorrer falha significativa.
 
 ---
 
-# ⚠ Observações importantes (nível profissional)
+# ⚠ Observações importantes
 
 ### 1. API pública tem limitações
 

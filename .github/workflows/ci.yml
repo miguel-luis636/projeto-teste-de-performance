@@ -13,7 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run k6 test
+      - name: Run k6 Smoke Tests
         uses: grafana/k6-action@v0.3.1
         with:
-          filename: test/smoke-users.js
+          filename: |
+            test/smoke-users.js
+            test/smoke-products.js

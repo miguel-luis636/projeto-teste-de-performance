@@ -1,6 +1,6 @@
 import { check, sleep } from "k6";
 import { createUser } from "../services/users.js";
-// proximos passos pegar o id e deletar
+
 
 export const options = {
   vus: 2,

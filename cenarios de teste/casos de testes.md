@@ -2,7 +2,7 @@
 
 ---
 
-## 🔹 CT-01 — Smoke Test
+## 🔹 CT-01 — Smoke Test(passou)
 
 **Tipo:** Smoke
 **Objetivo:** Validar se a API está disponível antes dos testes pesados

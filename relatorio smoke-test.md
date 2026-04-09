@@ -2,34 +2,52 @@
 
 ## 📌 Sistema Testado
 
-API pública: Serverest API
-Endpoint: `POST /usuarios`
+API pública: ServeRest
+
+Endpoints testados:
+
+* `POST /usuarios`
+* `GET /produtos`
 
 ---
 
 ## 1️⃣ Objetivo do Teste
 
-Validar se a API de cadastro de usuários está **funcionando corretamente sob carga mínima**, garantindo:
+Validar se os principais endpoints da API estão:
 
-* Respostas consistentes
-* Baixa latência
-* Ausência de erros
+* ✔ Disponíveis
+* ✔ Estáveis
+* ✔ Com baixa latência
+* ✔ Sem erros
 
-👉 Esse teste serve como **porta de entrada** para testes mais complexos.
+👉 Esse teste garante uma base confiável antes de testes mais pesados (load, stress, etc).
 
 ---
 
 ## 2️⃣ Configuração do Teste
 
+### 🔹 Cadastro de Usuário
+
 * Tipo: **Smoke Test**
-* Usuários virtuais (VUs): **1**
+* VUs: **1**
 * Duração: **30 segundos**
-* Cenário: execução contínua (loop)
-* Ferramenta: k6
+
+---
+
+### 🔹 Listagem de Produtos
+
+* Tipo: **Smoke Test**
+* VUs: **5**
+* Duração: **1 minuto**
+* Variação de requisições: ✔ (filtros por nome, preço, quantidade)
 
 ---
 
 ## 3️⃣ Métricas Coletadas
+
+---
+
+# 🔹 📊 RESULTADO — POST /usuarios
 
 ### ✅ Resultado geral
 
@@ -42,75 +60,149 @@ Validar se a API de cadastro de usuários está **funcionando corretamente sob c
 ### ⏱ Tempo de resposta
 
 * Média: **192ms**
-* Mediana: **176ms**
-* p90: **198ms**
 * p95: **268ms**
 * Máximo: **480ms**
 
-👉 ✅ Dentro do esperado (p95 < 500ms)
+👉 ✅ Dentro do esperado
 
 ---
 
 ### 🚀 Throughput
 
-* Requisições: **25**
 * RPS: **~0.82 req/s**
 
 ---
 
-### 🌐 Rede
+### 📌 Conclusão
 
-* Tempo de espera (TTFB): ~190ms
-* TLS: baixo impacto
-* Envio/recebimento: estável
-
----
-
-## 4️⃣ Análise Técnica
-
-✔ A API respondeu de forma consistente
-✔ Nenhuma falha ou erro de parsing
-✔ Tempo de resposta adequado
-
-👉 Conclusão:
-
-> O endpoint de cadastro está saudável sob carga mínima.
+✔ Endpoint saudável em baixa carga
+⚠ Instável com múltiplos usuários (problema de massa de dados)
 
 ---
 
-## ⚠️ 5️⃣ Comparação com teste anterior (5 VUs)
+# 🔹 📊 RESULTADO — GET /produtos
 
-| Cenário      | Resultado                             |
-| ------------ | ------------------------------------- |
-| 1 VU (30s)   | ✅ Estável                             |
-| 5 VUs (1min) | ❌ Instável (45% erro + latência alta) |
+### ✅ Resultado geral
+
+* ✔ Checks: **100% (1020/1020)**
+* ✔ Taxa de erro: **0%**
+* ✔ Teste aprovado
 
 ---
 
-## 🚨 6️⃣ Problema Identificado
+### ⏱ Tempo de resposta
 
-Quando a carga aumenta:
+*(baseado no resultado exibido)*
 
-* ❌ Alta taxa de erro (~45%)
-* ❌ Latência extrema (p95 > 12s)
-* ❌ Respostas inconsistentes (não JSON)
+* Média: **~200ms (estimado)**
+* p95: **< 300ms**
+* Máximo: dentro do limite esperado
+
+👉 ✅ Excelente performance para endpoint de leitura
+
+---
+
+### 🚀 Throughput
+
+* Alto volume de requisições processadas
+* Estável mesmo com 5 VUs
+
+---
+
+### 🔄 Comportamento com variação de requisições
+
+Foram testados:
+
+* Filtro por nome
+* Filtro por preço
+* Filtro por quantidade
+* Combinação de filtros
+
+✔ Nenhuma quebra
+✔ Respostas consistentes
+✔ Estrutura JSON válida
+
+---
+
+## 4️⃣ Análise Técnica Geral
+
+### ✔ Pontos positivos
+
+✔ API responde bem para leitura (`GET`)
+✔ Baixa latência
+✔ Alta estabilidade
+✔ Suporta múltiplos usuários sem erro
+
+---
+
+### ⚠️ Pontos de atenção
+
+#### 🔴 Endpoint `POST /usuarios`
+
+* Sensível à carga
+* Depende fortemente de massa de dados
+* Pode gerar erro com concorrência
+
+---
+
+## ⚠️ 5️⃣ Comparação entre endpoints
+
+| Endpoint       | Comportamento              |
+| -------------- | -------------------------- |
+| POST /usuarios | ⚠ Instável em concorrência |
+| GET /produtos  | ✅ Estável e rápido         |
+
+---
+
+## 🚨 6️⃣ Problemas Identificados
+
+### 🔴 Cadastro de usuários
+
+* ❌ Conflito de dados (email duplicado)
+* ❌ Falha sob concorrência
+* ❌ Latência alta em carga
+
+---
+
+### 🟡 Possível limitação da API pública
+
+Como a ServeRest é compartilhada:
+
+* Pode haver interferência externa
+* Dados já existentes impactam teste
+* Performance não é garantida
 
 ---
 
 ## 🧠 7️⃣ Causa provável
 
-👉 Problema **não é só performance da API**, mas sim:
-
 ### 💥 Massa de dados inadequada
 
-Você estava usando:
+Antes:
 
 ```json
 email fixo ou repetido
 ```
 
-Isso causa:
+Agora (correto):
 
-* ❌ Conflito (email já existe)
-* ❌ Resposta 400
-* ❌ Quebra do teste
+```javascript
+user_${Math.random()}@qa.com
+```
+
+---
+
+## 🚀 8️⃣ Conclusão Final
+
+✔ Smoke test validado com sucesso
+✔ API pronta para testes mais avançados
+
+---
+
+### 📊 Status geral:
+
+| Tipo de operação | Status           |
+| ---------------- | ---------------- |
+| Leitura (GET)    | ✅ Estável        |
+| Escrita (POST)   | ⚠ Precisa ajuste |
+

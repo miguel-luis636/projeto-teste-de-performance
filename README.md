@@ -107,6 +107,7 @@ Execute um teste simples diretamente no seu ambiente:
 
 ```
 k6 run tests/load-test.js
+k6 run test/smoke-users.js
 ```
 
 Esse comando irá:

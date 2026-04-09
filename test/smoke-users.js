@@ -1,6 +1,5 @@
-import { check, sleep } from "k6";
+import { check, sleep, group } from "k6";
 import { createUser } from "../services/users.js";
-
 
 export const options = {
   vus: 2,
@@ -14,35 +13,44 @@ export const options = {
 
 export default function () {
 
-  const uniqueEmail = `user_${Math.random()}@qa.com`;
+  group("Cadastro de Usuário", () => {
 
-  const newUser = {
-    nome: "Fulano da Silva",
-    email: uniqueEmail,
-    password: "pitbull2034",
-    administrador: "true",
-  };
+    const uniqueEmail = `user_${Math.random()}@qa.com`;
 
-  const resSuccess = createUser(newUser);
+    const newUser = {
+      nome: "Fulano da Silva",
+      email: uniqueEmail,
+      password: "pitbull2034",
+      administrador: "true",
+    };
 
-  check(resSuccess, {
-    "status 201 criado": (r) => r.status === 201,
+    const resSuccess = createUser(newUser);
 
-    "mensagem sucesso": (r) => {
-      if (r.status === 201) {
-        return r.json().message === "Cadastro realizado com sucesso";
-      }
-      return false;
-    },
+    group("Validações do Cadastro", () => {
 
-    "retorna id": (r) => {
-      if (r.status === 201) {
-        return r.json()._id !== undefined;
-      }
-      return false;
-    },
+      check(resSuccess, {
+        "status 201 criado": (r) => r.status === 201,
 
-    "tempo < 500ms": (r) => r.timings.duration < 500,
+        "mensagem sucesso": (r) => {
+          if (r.status === 201) {
+            return r.json().message === "Cadastro realizado com sucesso";
+          }
+          return false;
+        },
+
+        "retorna id": (r) => {
+          if (r.status === 201) {
+            return r.json()._id !== undefined;
+          }
+          return false;
+        },
+
+        "tempo < 500ms": (r) => r.timings.duration < 500,
+      });
+
+    });
+
   });
+
   sleep(1);
 }

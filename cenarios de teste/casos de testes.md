@@ -40,9 +40,9 @@ Executar um teste leve para garantir que os principais endpoints respondem corre
 
 ---
 
-## 🔹 CT-02 — Teste de Carga (Load Test)
+## 🔹 CT-02 — Teste de Carga (em progresso)
 
-**Tipo:** Load
+**Tipo:** Carga
 
 **Objetivo:**
 Validar comportamento sob uso normal
@@ -58,7 +58,8 @@ Simular usuários reais utilizando a API de forma contínua.
 
 **Carga:**
 
-* 70 → 500 VUs
+* 50 → 200 VUs
+* 20 → 70 VUs
 
 **Ramp-up:**
 
